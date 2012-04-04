@@ -1,3 +1,4 @@
+#!/home/mkness/epd/bin/python
 '''
 sincos.py - Test program for git practice.
 '''
