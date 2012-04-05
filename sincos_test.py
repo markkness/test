@@ -15,7 +15,7 @@ import sincos
 # Tests
 #
 
-# Calculate also with explicit trig formulas and compare to recurrence.
+# Compare recurrence results to explicit trig formulas.
 
 def sincos_all_error(x, n):
     '''Return a numpy array with the difference sincos_all() - sincos_all_test().
@@ -34,7 +34,7 @@ def sincos_all_errmag(x, n):
     errmag = math.sqrt(errsum)
     return errmag
 
-def sincos_all_test(x, n, verbose=False, tol=1.0e-10):
+def sincos_all_subtest(x, n, verbose=False, tol=1.0e-10):
     '''Return whether the error in sincos_all() is <= tol.'''
     errmag = sincos_all_errmag(x, n)
     if verbose:
@@ -69,7 +69,7 @@ def sincos_check_unit(sc, verbose=False, tol=1.0e-10):
     # all checks passed
     return True
 
-def sincos_check_unit_test(x, n, verbose=False, tol=1.0e-10):
+def sincos_check_unit_subtest(x, n, verbose=False, tol=1.0e-10):
     '''Return whether the error in sincos_all() is <= tol.'''
     sc = sincos.sincos_all(x, n)
     rtn = sincos_check_unit(sc, verbose=verbose, tol=tol)
@@ -77,7 +77,7 @@ def sincos_check_unit_test(x, n, verbose=False, tol=1.0e-10):
 
 # Driver to run all tests for multiple cases
 
-def sincos_all_test_many(m, verbose=False, tol=1.0e-10):
+def sincos_all_subtest_many(m, verbose=False, tol=1.0e-10):
     '''Run m tests and return the count of success, failure as a tuple.'''
     random.seed()
     good = 0
@@ -89,7 +89,7 @@ def sincos_all_test_many(m, verbose=False, tol=1.0e-10):
         # test against explicit trig calls
         if verbose:
             print('Testing sincos(x=% -10g, n=%3d) ...' % (x, n)),
-        ok = sincos_all_test(x, n, verbose, tol)
+        ok = sincos_all_subtest(x, n, verbose, tol)
         if ok:
             good += 1
         else:
@@ -97,7 +97,7 @@ def sincos_all_test_many(m, verbose=False, tol=1.0e-10):
         # test for sin*sin + cos*cos = 1
         if verbose:
             print('Testing sin*sin + cos*cos = 1 (x=% -10g, n=%3d) ...' % (x, n)),
-        ok = sincos_check_unit_test(x, n, verbose, tol)
+        ok = sincos_check_unit_subtest(x, n, verbose, tol)
         if ok:
             good += 1
         else:
@@ -105,6 +105,7 @@ def sincos_all_test_many(m, verbose=False, tol=1.0e-10):
             
     if verbose:
         print('Passed %d tests, Failed %d tests.' % (good, fail))
+    assert (fail == 0)
     rtn = (good, fail)
     return rtn
     
@@ -127,13 +128,16 @@ def test():
     print('Test case for n=1..8...')
     sincos_all_error(x, 8)
     sincos_all_errmag(x, 8)
-    ok = sincos_all_test(x, 8, verbose=True)
+    ok = sincos_all_subtest(x, 8, verbose=True)
     print('ok = %s' % str(ok))
     # s*s + c*c = 1 test
     sincos_check_unit(sc8, verbose=True)
     # multiple test cases
     print('Multiple test cases...')
-    sincos_all_test_many(10, verbose=True, tol=1.0e-10)
+    sincos_all_subtest_many(10, verbose=True, tol=1.0e-10)
     
-test()
+if __name__ == '__main__':
+    test()
+else:
+    print('Not main.')
 
