@@ -36,6 +36,19 @@ def sincos_all(x, n):
         rtn[i-1, 1] = cn
     return rtn
 
+#
+# Nicely formatted printout of sin/cos array
+#
+
+def sincos_print(x, n, sc):
+    '''Nicely print the sin,cos values.'''
+    for i in range(n):
+        j = i + 1        # angle multiple
+        sj = sc[i, 0]
+        cj = sc[i, 1]
+        print('sin(%2d*%g) = % -12g,    cos(%2d*%g) = % -12g' % (
+            j, x, sj, j, x, cj))
+
 def test():
     '''Test driver.'''
     x = 2.718281828
@@ -51,6 +64,7 @@ def test():
         3, x, s3, x, c3))
     scn = sincos_all(x, 8)
     print 'scn=', scn
+    sincos_print(x, 8, scn)
 
 test()
 
