@@ -4,7 +4,6 @@ sincos.py - Calculates sin(n*x), cos(n*x) for n=1..N using recurrence formula.
 '''
 
 import math
-#import random
 import numpy
 
 def sincos(x):
@@ -70,4 +69,3 @@ def sincos_print(x, n, sc):
         cj = sc[i, 1]
         print('sin(%2d*%g) = % -12g,    cos(%2d*%g) = % -12g' % (
             j, x, sj, j, x, cj))
-
