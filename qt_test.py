@@ -1,3 +1,4 @@
+#!/home/mkness/epd/bin/python
 '''
 qt_test.py - Qt test program to check PySide installation.
 
