@@ -87,4 +87,5 @@ def sincos_print(x, n, sc):
 
 def sincos_unused():
     '''Test function that is not called and should miss coverage tests.'''
+    print('Unused function not covered in tests.')
     return 123 + 456
