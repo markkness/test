@@ -1,4 +1,4 @@
-#!/home/mkness/epd/bin/python
+#!/usr/bin/env python
 '''
 sincos_test.py - Unit tests for sincos calculation via recurrence.
 

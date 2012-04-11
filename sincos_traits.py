@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
 sincos_traits.py - Test program to request sincos recurrence params via Traits.
 '''

@@ -1,4 +1,4 @@
-#!/home/mkness/epd/bin/python
+#!/usr/bin/env python
 '''
 sincos.py - Calculates sin(n*x), cos(n*x) for n=1..N using recurrence formula.
 
