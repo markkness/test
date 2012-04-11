@@ -7,12 +7,14 @@ import sincos
 
 # Major library imports
 from numpy import exp, linspace, sqrt
+from numpy.random import random
 from scipy.special import gamma
 
 # Enthought library imports
 from enable.api import Component, ComponentEditor
-from traits.api import HasTraits, Instance, Button, Int, Float
+from traits.api import HasTraits, Instance, Button, Array, Int, Float
 from traitsui.api import Item, Group, View
+from traitsui.ui_editors.array_view_editor import ArrayViewEditor
 
 # Chaco imports
 from chaco.api import ArrayPlotData, Plot
@@ -22,6 +24,7 @@ def doit(x, n):
     '''Calculate sin(i*x),cos(i*x) for i=1..n using recurrence formula.'''
     sc = sincos.sincos_calc_recur(x, n)
     sincos.sincos_print(x, n, sc)
+    return sc
 
 #===============================================================================
 # # Create the Chaco plot.
@@ -149,6 +152,7 @@ class SinCosEditorDemo(HasTraits):
     button2 = Button('Bozo')
     theta  = Float(1.0)
     order  = Int(1)
+    data = Array
 
     #def setup_data(self, th, n):
     #    # Create some x-y data series to plot
@@ -188,11 +192,26 @@ class SinCosEditorDemo(HasTraits):
         orientation = "vertical",
     )
 
+    table_group = Group(
+        Item(
+            'data',
+            show_label = False,
+            editor     = ArrayViewEditor(
+                             titles = [ 'sin((n+1)*x)', 'cos((n+1)*x)' ],
+                             format = '%.4f',
+                             # Font fails with wx in OSX;
+                             #   see traitsui issue #13:
+                             # font   = 'Arial 8'
+                         )
+        )
+    )
+
     traits_view = View(
         'button',
         'button2',
         sincos_group,
         plot_group,
+        table_group,
         title   = 'Sin/Cos Recurrence Editor',
         buttons = [ 'OK' ],
         resizable = True,
@@ -202,7 +221,7 @@ class SinCosEditorDemo(HasTraits):
         th = self.theta
         n  = self.order
         print('BUTTON PRESSED!!!: th = %g, n = %d' % (th, n))
-        doit (th, n)
+        self.data = doit (th, n)
         #plot = _create_plot_component(True)
         #plot_stuff(self.plot, True)
         self.pd.set_data("y0", exp(self.x))
@@ -218,7 +237,7 @@ class SinCosEditorDemo(HasTraits):
          return _create_plot_component2(self.pd,False)
 
 # Create the demo:
-demo = SinCosEditorDemo()
+demo = SinCosEditorDemo(data = random((100, 2)))
 #demo.setup_data (1.0, 1)
 
 # Run (if invoked from the command line):
