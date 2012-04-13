@@ -5,10 +5,12 @@ sincos_traits.py - Test program to request sincos recurrence params via Traits.
 
 import sincos
 
+import pdb
+import math
+
 # Major library imports
-from numpy import exp, linspace, sqrt
-from numpy.random import random
-from scipy.special import gamma
+import numpy
+from numpy import linspace, sin, cos
 
 # Enthought library imports
 from enable.api import Component, ComponentEditor
@@ -29,152 +31,76 @@ def doit(x, n):
 #===============================================================================
 # # Create the Chaco plot.
 #===============================================================================
-def _create_plot_component(all_):
 
-    # Create some x-y data series to plot
-    x = linspace(1.0, 8.0, 200)
-    pd = ArrayPlotData(index = x)
-    pd.set_data("y0", sqrt(x))
-    pd.set_data("y1", x)
-    pd.set_data("y2", x**2)
-    pd.set_data("y3", exp(x))
-    pd.set_data("y4", gamma(x))
-    pd.set_data("y5", x**x)
-
-    # Create some line plots of some of the data
+def _create_plot_component(pd):
     plot = Plot(pd)
-    plot.plot(("index", "y0"), line_width=2, name="sqrt(x)", color="purple")
-    plot.plot(("index", "y1"), line_width=2, name="x", color="blue")
-    plot.plot(("index", "y2"), line_width=2, name="x**2", color="green")
-    if all_:
-        plot.plot(("index", "y3"), line_width=2, name="exp(x)", color="gold")
-        plot.plot(("index", "y4"), line_width=2, name="gamma(x)",color="orange")
-        plot.plot(("index", "y5"), line_width=2, name="x**x", color="red")
-
-    # Set the value axis to display on a log scale
-    plot.value_scale = "log"
-
-    # Tweak some of the plot properties
-    plot.title = "Log Plot"
-    plot.padding = 50
-    plot.legend.visible = True
-
-    # Attach some tools to the plot
-    plot.tools.append(PanTool(plot))
-    zoom = ZoomTool(component=plot, tool_mode="box", always_on=False)
-    plot.overlays.append(zoom)
-
-    return plot
-
-def _create_plot_component2(pd, all_):
-
-    ## Create some x-y data series to plot
-    #x = linspace(1.0, 8.0, 200)
-    #pd = ArrayPlotData(index = x)
-    #pd.set_data("y0", sqrt(x))
-    #pd.set_data("y1", x)
-    #pd.set_data("y2", x**2)
-    #pd.set_data("y3", exp(x))
-    #pd.set_data("y4", gamma(x))
-    #pd.set_data("y5", x**x)
-
-    # Create some line plots of some of the data
-    plot = Plot(pd)
-    plot.plot(("index", "y0"), line_width=2, name="sqrt(x)", color="purple")
-    plot.plot(("index", "y1"), line_width=2, name="x", color="blue")
-    plot.plot(("index", "y2"), line_width=2, name="x**2", color="green")
-    if all_:
-        plot.plot(("index", "y3"), line_width=2, name="exp(x)", color="gold")
-        plot.plot(("index", "y4"), line_width=2, name="gamma(x)",color="orange")
-        plot.plot(("index", "y5"), line_width=2, name="x**x", color="red")
-
-    # Set the value axis to display on a log scale
-    plot.value_scale = "log"
-
-    # Tweak some of the plot properties
-    plot.title = "Log Plot"
-    plot.padding = 50
-    plot.legend.visible = True
-
-    # Attach some tools to the plot
-    plot.tools.append(PanTool(plot))
-    zoom = ZoomTool(component=plot, tool_mode="box", always_on=False)
-    plot.overlays.append(zoom)
-
-    return plot
-
-def plot_stuff(plot, all_):
-    '''Plot some curves.'''
-    # Create some x-y data series to plot
-    x = linspace(1.0, 8.0, 200)
-    pd = ArrayPlotData(index = x)
-    pd.set_data("y0", sqrt(x))
-    pd.set_data("y1", x)
-    pd.set_data("y2", x**2)
-    if all_:
-        pd.set_data("y3", exp(x))
-        pd.set_data("y4", gamma(x))
-        pd.set_data("y5", x**x)
-
-    # Create some line plots of some of the data
-    #plot = Plot(pd)
-    plot.plot(("index", "y0"), line_width=2, name="sqrt(x)", color="purple")
-    plot.plot(("index", "y1"), line_width=2, name="x", color="blue")
-    plot.plot(("index", "y2"), line_width=2, name="x**2", color="green")
-    if all_:
-        plot.plot(("index", "y3"), line_width=2, name="exp(x)", color="gold")
-        plot.plot(("index", "y4"), line_width=2, name="gamma(x)",color="orange")
-        plot.plot(("index", "y5"), line_width=2, name="x**x", color="red")
-
-    # Set the value axis to display on a log scale
-    plot.value_scale = "log"
-
-    # Tweak some of the plot properties
-    plot.title = "Log Plot"
-    plot.padding = 50
-    plot.legend.visible = True
-
-    ## Attach some tools to the plot
-    #plot.tools.append(PanTool(plot))
-    #zoom = ZoomTool(component=plot, tool_mode="box", always_on=False)
-    #plot.overlays.append(zoom)
-
-    #return plot
     
+    # analytic curves for sin(x),cos(x)
+    plot.plot(("x0", "y0"), line_width=2, name="sin(x)", color="purple")
+    plot.plot(("x0", "y1"), line_width=2, name="cos(x)", color="blue")
+    # discrete recurrence values Sn,Cn
+    plot.plot(("x1", "y2"), type="scatter", name="Sn", color="green")
+    plot.plot(("x1", "y3"), type="scatter", name="Cn", color="gold")
+
+    # Tweak some of the plot properties
+    plot.title = "Sin/Cos"
+    plot.padding = 50
+    plot.legend.visible = True
+
+    # Attach some tools to the plot
+    plot.tools.append(PanTool(plot))
+    zoom = ZoomTool(component=plot, tool_mode="box", always_on=False)
+    plot.overlays.append(zoom)
+
+    return plot
+
 # The main demo class:
 class SinCosEditorDemo(HasTraits):
-    """ Defines the TextEditor demo class.
-    """
+    '''Plotting example that calculates sin/cos analytically and via recurrence.'''
 
     plot = Instance(Component)
-    # Define traits
     button = Button('Calculate')
-    button2 = Button('Bozo')
-    theta  = Float(1.0)
-    order  = Int(1)
+    theta  = Float(0.1)
+    order  = Int(10)
     data = Array
+    pd = ArrayPlotData()
 
-    #def setup_data(self, th, n):
-    #    # Create some x-y data series to plot
-    #    self.x = linspace(1.0, 8.0, 200)
-    #    self.pd = ArrayPlotData(index = self.x)
-    #    self.pd.set_data("y0", sqrt(self.x))
-    #    self.pd.set_data("y1", self.x)
-    #    self.pd.set_data("y2", self.x ** 2)
-    #    self.pd.set_data("y3", exp(self.x))
-    #    self.pd.set_data("y4", gamma(self.x))
-    #    self.pd.set_data("y5", self.x ** self.x)
+    def __init__(self):
+        super(SinCosEditorDemo, self).__init__()
 
-    #setup_data(theta, order)
-    # Create some x-y data series to plot
-    x = linspace(1.0, 8.0, 200)
-    pd = ArrayPlotData(index = x)
-    pd.set_data("y0", sqrt(x))
-    pd.set_data("y1", x)
-    pd.set_data("y2", x**2)
-    pd.set_data("y3", exp(x))
-    pd.set_data("y4", gamma(x))
-    pd.set_data("y5", x**x)
+    def setup_data(self):
+        # Get table of recurrence values
+        th = self.theta
+        n  = self.order
+        self.data = doit (th, n)
+        # x values for recurrence
+        self.xn = numpy.empty ((n))
+        for i in range(n):
+            self.xn[i] = (i + 1) * th
+        # y values for recurrence
+        y2 = self.data[:,0]
+        y3 = self.data[:,1]
+        # plotdata for recurrence values
+        self.pd.set_data("x1", self.xn)
+        self.pd.set_data("y2", y2)
+        self.pd.set_data("y3", y3)
+        # x values for analytic curves
+        xmin = 0.001
+        xmax = 2.0 * (n + 1) * th
+        # at least 100 points per period
+        npts0 = round (100 * n * th / (2.0*math.pi))
+        # at least 200 points total
+        npts1 = 200
+        npts = max(npts0, npts1)
+        #print('npts = %d [npts0 = %d, npts1 = %d]' % (npts, npts0, npts1))
+        self.x = linspace(xmin, xmax, npts)
+        # y values for analytic curves
+        y0 = sin(self.x)
+        y1 = cos(self.x)
+        # plotdata for analytic curves
+        self.pd.set_data("x0", self.x)
+        self.pd.set_data("y0", y0)
+        self.pd.set_data("y1", y1)
 
     # TextEditor display with multi-line capability (for a string):
     sincos_group = Group(
@@ -192,23 +118,16 @@ class SinCosEditorDemo(HasTraits):
         orientation = "vertical",
     )
 
+    table_titles = ['sin((n+1)*x)', 'cos((n+1)*x)']
     table_group = Group(
         Item(
             'data',
-            show_label = False,
-            editor     = ArrayViewEditor(
-                             titles = [ 'sin((n+1)*x)', 'cos((n+1)*x)' ],
-                             format = '%.4f',
-                             # Font fails with wx in OSX;
-                             #   see traitsui issue #13:
-                             # font   = 'Arial 8'
-                         )
-        )
+            editor=ArrayViewEditor(titles=table_titles, format='%.6f'),
+            show_label=False),
     )
 
     traits_view = View(
         'button',
-        'button2',
         sincos_group,
         plot_group,
         table_group,
@@ -218,27 +137,15 @@ class SinCosEditorDemo(HasTraits):
     )
     
     def _button_fired(self):
-        th = self.theta
-        n  = self.order
-        print('BUTTON PRESSED!!!: th = %g, n = %d' % (th, n))
-        self.data = doit (th, n)
-        #plot = _create_plot_component(True)
-        #plot_stuff(self.plot, True)
-        self.pd.set_data("y0", exp(self.x))
-        self.pd.set_data("y1", gamma(self.x))
-        self.pd.set_data("y2", self.x**self.x)
+        print('BUTTON PRESSED!!!')
+        self.setup_data()
 
-    def _button2_fired(self):
-        print('BOZO')
-        #self.setup_data(self.theta, self.order)
-                        
     def _plot_default(self):
-         #return _create_plot_component(False)
-         return _create_plot_component2(self.pd,False)
+         return _create_plot_component(self.pd)
 
 # Create the demo:
-demo = SinCosEditorDemo(data = random((100, 2)))
-#demo.setup_data (1.0, 1)
+demo = SinCosEditorDemo()
+demo.setup_data()
 
 # Run (if invoked from the command line):
 if __name__ == "__main__":
