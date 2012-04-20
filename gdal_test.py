@@ -64,6 +64,7 @@ def write_geotiff(filename, dataset):
     for i in range(nbands):
         out_band = out_ds.GetRasterBand(i + 1)
         out_band.WriteArray(dataset[:,:,i])
+    out_ds = None
 
 def main():
     print('GDAL test.')
