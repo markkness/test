@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
 gdal_test.py - Test program for exploring GDAL.
 '''
